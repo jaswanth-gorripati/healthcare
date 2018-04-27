@@ -1,0 +1,47 @@
+{
+  "$class": "health.Register_Insurance",
+  "Insurance_id": "insur001",
+  "patient_id": "resource:health.Patient#mnr001",
+  "Cost_of_insurance": 100000,
+  "Start_Date": "2017-04-24T23:23:54.214Z",
+  "Insurence_end_date": "2019-04-24T23:23:54.214Z",
+  "Max_allowed_balance": 100000
+}
+
+
+{
+  "$class": "health.Encounterbooking",
+  "encounter_details": {
+    "$class": "health.nextencounter",
+    "encounterId": "enctr001",
+    "Provider": "resource:health.Provider#prvdr001",
+    "Encounterdate": "2018-04-27T06:28:30.613Z",
+    "symptoms": "Loss of weight , weekness"
+  },
+  "patient": "resource:health.Patient#mnr001"
+}
+
+{
+  "$class": "health.Providervisit",
+  "encounterId": "resource:health.Encounter#enctr001",
+  "status": "VISITED",
+  "medicineperiod": 3,
+  "prescription": "tonic , Wro , B-vitamin tablets"
+}
+
+
+{
+  "$class": "health.Providervisit",
+  "encounterId": "resource:health.Encounter#enctr002",
+  "status": "REVISIT",
+  "medicineperiod": 4,
+  "prescription": "tablets",
+  "RecommendedTest": [{"$class":"health.testsRequired","testName":"Calsium Check","Precautions":"Give a soft drink to patient after the test"}]
+}
+
+{
+  "$class": "health.Claim_Insurance",
+  "encounterId": "resource:health.Encounter#enctr001",
+  "insuranceId": "resource:health.MedicInsurance#insur001",
+  "claimming_amount": 1200
+}

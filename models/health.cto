@@ -1,0 +1,177 @@
+/**
+ * Write your model definitions here
+ */
+
+namespace health
+
+
+participant Patient identified by MrnNumber{
+ 
+ o String MrnNumber
+ o String FullName
+ o DateTime Dob
+ o Integer Age
+ o String Emailid
+ o Category Gender
+ o String Ethnicity
+ o String BloodType
+ o String Phone
+ o Address Address
+ --> Provider FamilyProvider 
+ --> MedicInsurance []InsuranceProviders optional
+ --> Encounter []perviousvisit optional
+ o nextencounter current_encounter optional
+}
+
+enum Category {
+  o Male
+  o Female
+  o Other
+}
+participant InsuranceProvider identified by insurenceProviderId {
+  o String insurenceProviderId
+  o String insuranceCompanyName
+  o Address location
+}
+participant Provider identified by providerId {
+  o String providerId
+  o String name
+  o Speciality specialist
+  o Integer Experience
+  o Education education        
+}
+concept Education {
+  o String degree_name
+  o String college
+  o String completed_year
+}
+enum Speciality{
+  o Dermatologist
+  o Cardiologist
+  o Nephrologist
+  o Neurologist
+  o Neurosurgeon
+  o Physician
+  o Hematologist
+  o Pathologist
+  o Pediatrician
+}
+
+concept nextencounter {
+  o String encounterId
+  --> Provider Provider
+  o DateTime Encounterdate
+  o String symptoms 
+  --> InsuranceProvider insuranceProvider optional
+}
+
+asset MedicInsurance identified by InsuranceId{
+  o String InsuranceId
+  --> InsuranceProvider InsuranceCompanyId
+  o Long Cost_of_insurance
+  o DateTime Start_Date
+  o DateTime Insurence_end_date
+  o Long Max_allowed_balance
+  o Long Available_balance
+  --> Patient patient
+  o Claims []Claims optional
+}
+concept Claims {
+  --> Encounter Encounter_id
+  o Long used_balance
+}
+concept Address {
+  o String addressLine1
+  o String addressLine2
+  o String city default ="Winchester"
+  o String state default="Newyork"
+  o String country default = "USA"
+  o String zip
+}
+concept Status {
+  o statustype Status
+  o String reason optional
+  o DateTime nextencounterdate optional
+}
+
+enum  statustype {
+  o YETTOVISIT
+  o VISITED
+  o CANCELED
+  o REVISIT
+}
+
+enum EncounterStatus{
+  o ACTIVE
+  o INACTIVE
+}
+
+concept testsRequired {
+  o String testName
+  o String Precautions optional
+}
+asset Encounter identified by encounterId {
+  o String encounterId
+  --> Provider Provider
+  o String symptoms
+  o DateTime Encounterdate
+  --> Patient patient
+  o Integer medicineperiod optional
+  o String prescription     optional
+  o String consultanotherdoctor optional
+  o testsRequired []RecommendedTest optional
+  o statustype patient_status 
+  o EncounterStatus encounter_status
+  --> InsuranceProvider insuranceProvider optional 
+}
+
+transaction AddPatient {
+  o Patient patientDetails
+}
+transaction AddProvider {
+  o Provider Provider_details
+}
+transaction AddInsurer {
+  o InsuranceProvider insurer_details
+}
+
+transaction Register_Insurance{
+  o String Insurance_id
+  --> Patient patient_id
+  o Long Cost_of_insurance
+  o DateTime Start_Date
+  o DateTime Insurence_end_date
+  o Long Max_allowed_balance
+}
+
+transaction  Encounterbooking {
+  o nextencounter encounter_details
+  --> Patient patient
+}
+
+transaction  Providervisit {
+  --> Encounter encounterId
+  o statustype status
+  o Integer medicineperiod
+  o String prescription
+  o String consultanotherdoctor optional
+  o testsRequired []RecommendedTest optional
+}
+
+transaction  Change_encounter_status {
+  --> Encounter Encounter
+  o Status Status
+}
+
+transaction Claim_Insurance{
+  --> Encounter encounterId
+  --> MedicInsurance insuranceId
+  o Long claimming_amount
+}
+
+transaction AddInsurance {
+  --> MedicInsurance insuranceId
+}
+
+transaction Demo {
+}
