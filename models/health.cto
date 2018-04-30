@@ -21,6 +21,7 @@ participant Patient identified by MrnNumber{
  --> MedicInsurance []InsuranceProviders optional
  --> Encounter []perviousvisit optional
  o nextencounter current_encounter optional
+ o Patient []sharingDetails optional
 }
 
 enum Category {
@@ -28,8 +29,8 @@ enum Category {
   o Female
   o Other
 }
-participant InsuranceProvider identified by insurenceProviderId {
-  o String insurenceProviderId
+participant InsuranceProvider identified by insuranceProviderId {
+  o String insuranceProviderId
   o String insuranceCompanyName
   o Address location
 }
@@ -70,7 +71,7 @@ asset MedicInsurance identified by InsuranceId{
   --> InsuranceProvider InsuranceCompanyId
   o Long Cost_of_insurance
   o DateTime Start_Date
-  o DateTime Insurence_end_date
+  o DateTime Insurance_end_date
   o Long Max_allowed_balance
   o Long Available_balance
   --> Patient patient
@@ -124,7 +125,10 @@ asset Encounter identified by encounterId {
   o EncounterStatus encounter_status
   --> InsuranceProvider insuranceProvider optional 
 }
-
+asset RecordsSharing identified by sharingId{
+  o String sharingId
+  o String []sharingWithIds
+}
 transaction AddPatient {
   o Patient patientDetails
 }
@@ -140,7 +144,7 @@ transaction Register_Insurance{
   --> Patient patient_id
   o Long Cost_of_insurance
   o DateTime Start_Date
-  o DateTime Insurence_end_date
+  o DateTime Insurance_end_date
   o Long Max_allowed_balance
 }
 
@@ -171,6 +175,26 @@ transaction Claim_Insurance{
 
 transaction AddInsurance {
   --> MedicInsurance insuranceId
+}
+transaction RemoveInsurer {
+  --> MedicInsurance insuranceId
+}
+enum Participants{
+  o Patient
+  o InsuranceProviders
+  o Provider
+}
+
+transaction AddPermissionToId {
+  o Participants sharingWith
+  o String id
+}
+transaction RevokeSharing{
+  o Participants sharingWith
+  o String id
+}
+transaction ChangeProvider{
+  --> Provider providerId
 }
 
 transaction Demo {

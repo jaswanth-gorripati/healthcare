@@ -1,6 +1,99 @@
 /**
  * Sample access control list.
  */
+rule ERforNonFProviders{
+  description:  "System ACL to permit all access"
+  participant(p): "health.Provider"
+  operation: ALL
+  resource(r): "health.Encounter"
+  condition: (r.patient.FamilyProvider.getIdentifier() != p.getIdentifier())
+  action: DENY
+}
+rule ERforFProviders{
+  description:  "System ACL to permit all access"
+  participant(p): "health.Provider"
+  operation: CREATE, DELETE
+  resource(r): "health.Encounter"
+  condition: (r.patient.FamilyProvider.getIdentifier() == p.getIdentifier())
+  action: DENY
+}
+rule ERdeleteProtection{
+  description:  "System ACL to permit all access"
+  participant: "health.**"
+  operation:DELETE
+  resource: "health.**"
+  action: DENY
+}
+rule ERforNonInsurer{
+  description:  "System ACL to permit all access"
+  participant(p): "health.InsuranceProvider"
+  operation: ALL
+  resource(r): "health.Encounter"
+  condition: (r.insuranceProvider.getIdentifier() != p.getIdentifier())
+  action: DENY
+}
+rule ERforInsurer{
+  description:  "System ACL to permit all access"
+  participant(p): "health.InsuranceProvider"
+  operation: CREATE, DELETE
+  resource(r): "health.Encounter"
+  condition: (r.insuranceProvider.getIdentifier() == p.getIdentifier())
+  action: DENY
+}
+rule MedInsuranceForfPatients{
+  description:  "System ACL to permit all access"
+  participant(p): "health.Patient"
+  operation: ALL
+  resource(r): "health.MedicInsurance"
+  condition: (r.patient.getIdentifier() != p.getIdentifier())
+  action: DENY
+}
+rule medInsuranceForPatients{
+  description:  "System ACL to permit all access"
+  participant(p): "health.Patient"
+  operation: DELETE, UPDATE, CREATE
+  resource(r): "health.MedicInsurance"
+  condition: (r.patient.getIdentifier() == p.getIdentifier())
+  action: DENY
+}
+rule MedInsuranceForNonInsurers{
+  description:  "System ACL to permit all access"
+  participant(p): "health.InsuranceProvider"
+  operation: ALL
+  resource(r): "health.MedicInsurance"
+  condition: (r.InsuranceCompanyId.insuranceCompanyName != p.insuranceCompanyName)
+  action: DENY
+}
+rule MedInsuranceForInsurer{
+  description:  "System ACL to permit all access"
+  participant(p): "health.InsuranceProvider"
+  operation: UPDATE, CREATE ,READ
+  resource(r): "health.MedicInsurance"
+  condition: (r.InsuranceCompanyId.insuranceCompanyName == p.insuranceCompanyName)
+  action: ALLOW
+}
+rule MedInsuForInsurers{
+  description:  "System ACL to permit all access"
+  participant: "health.InsuranceProvider"
+  operation: ALL
+  resource: "health.MedicInsurance"
+  action: DENY
+}
+rule MedInsuForProviders{
+  description:  "System ACL to permit all access"
+  participant: "health.Provider"
+  operation: ALL
+  resource: "health.MedicInsurance"
+  action: DENY
+}
+
+rule All{
+  description:  "System ACL to permit all access"
+  participant: "health.**"
+  operation: ALL
+  resource: "health.**"
+  action: ALLOW
+}
 
 rule SystemACL {
   description:  "System ACL to permit all access"
