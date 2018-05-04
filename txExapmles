@@ -1,10 +1,10 @@
 {
   "$class": "health.Register_Insurance",
-  "Insurance_id": "insur001",
+  "Insurance_id": "insur002",
   "patient_id": "resource:health.Patient#mnr001",
   "Cost_of_insurance": 100000,
   "Start_Date": "2017-04-24T23:23:54.214Z",
-  "Insurence_end_date": "2019-04-24T23:23:54.214Z",
+  "Insurance_end_date": "2019-04-24T23:23:54.214Z",
   "Max_allowed_balance": 100000
 }
 
@@ -23,7 +23,7 @@
 
 {
   "$class": "health.Providervisit",
-  "encounterId": "resource:health.Encounter#enctr001",
+  "encounterId": "resource:health.Encounter#enctr002",
   "status": "VISITED",
   "medicineperiod": 3,
   "prescription": "tonic , Wro , B-vitamin tablets"
@@ -45,4 +45,19 @@
   "encounterId": "resource:health.Encounter#enctr001",
   "insuranceId": "resource:health.MedicInsurance#insur001",
   "claimming_amount": 1200
+}
+
+{
+  "$class": "health.Claim_Insurance",
+  "encounterId": "resource:health.Encounter#enctr002",
+  "insuranceId": "resource:health.MedicInsurance#insur001",
+  "request_claimming_amount": 1200
+}
+
+{
+  "$class": "health.Approve_insurance",
+  "encounterId": "resource:health.Encounter#enctr002",
+  "insuranceId": "resource:health.MedicInsurance#insur001",
+  "claimming_amount": 10000,
+  "remarks": "Tests performed are not covered in the insurance"
 }

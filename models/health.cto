@@ -21,7 +21,7 @@ participant Patient identified by MrnNumber{
  --> MedicInsurance []InsuranceProviders optional
  --> Encounter []perviousvisit optional
  o nextencounter current_encounter optional
- o Patient []sharingDetails optional
+ o String []sharingDetails optional
 }
 
 enum Category {
@@ -75,11 +75,17 @@ asset MedicInsurance identified by InsuranceId{
   o Long Max_allowed_balance
   o Long Available_balance
   --> Patient patient
+  o Requests []Claim_requests optional
   o Claims []Claims optional
+}
+concept Requests {
+  --> Encounter Encounter_id
+  o Long Claiming_Amount
 }
 concept Claims {
   --> Encounter Encounter_id
   o Long used_balance
+  o String Remarks optional
 }
 concept Address {
   o String addressLine1
@@ -139,7 +145,7 @@ transaction AddInsurer {
   o InsuranceProvider insurer_details
 }
 
-transaction Register_Insurance{
+transaction Register_Insurance{ ///only for insurare
   o String Insurance_id
   --> Patient patient_id
   o Long Cost_of_insurance
@@ -148,12 +154,12 @@ transaction Register_Insurance{
   o Long Max_allowed_balance
 }
 
-transaction  Encounterbooking {
+transaction  Encounterbooking {///not for insurare
   o nextencounter encounter_details
   --> Patient patient
 }
 
-transaction  Providervisit {
+transaction  Providervisit { //only for provider
   --> Encounter encounterId
   o statustype status
   o Integer medicineperiod
@@ -162,18 +168,24 @@ transaction  Providervisit {
   o testsRequired []RecommendedTest optional
 }
 
-transaction  Change_encounter_status {
+transaction  Change_encounter_status {///only fpr provider
   --> Encounter Encounter
   o Status Status
 }
 
-transaction Claim_Insurance{
+transaction Claim_Insurance{ ///insuarer
+  --> Encounter encounterId
+  --> MedicInsurance insuranceId
+  o Long request_claimming_amount
+}
+transaction Approve_insurance {
   --> Encounter encounterId
   --> MedicInsurance insuranceId
   o Long claimming_amount
+  o String remarks optional
 }
 
-transaction AddInsurance {
+transaction AddInsurance { ///only patient can make changes form here
   --> MedicInsurance insuranceId
 }
 transaction RemoveInsurer {

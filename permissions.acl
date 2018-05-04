@@ -1,6 +1,23 @@
 /**
  * Sample access control list.
  */
+ rule AccessToEncounter{
+  description:  "System ACL to permit all access"
+  participant(p): "health.**"
+  operation: READ
+  resource(r): "health.Encounter"
+  condition: (r.patient.sharingDetails.indexOf(p.getFullyQualifiedIdentifier())> -1)
+  action: ALLOW
+}
+
+rule ERforPatients{
+  description:  "System ACL to permit all access"
+  participant(p): "health.Patient"
+  operation: ALL
+  resource(r): "health.Encounter"
+  condition: (r.patient.getIdentifier() != p.getIdentifier())
+  action: DENY
+}
 rule ERforNonFProviders{
   description:  "System ACL to permit all access"
   participant(p): "health.Provider"
@@ -22,6 +39,14 @@ rule ERdeleteProtection{
   participant: "health.**"
   operation:DELETE
   resource: "health.**"
+  action: DENY
+}
+rule ERforAllInsurer{
+  description:  "System ACL to permit all access"
+  participant(p): "health.InsuranceProvider"
+  operation: ALL
+  resource(r): "health.Encounter"
+  condition: (!r.insuranceProvider)
   action: DENY
 }
 rule ERforNonInsurer{
@@ -51,7 +76,7 @@ rule MedInsuranceForfPatients{
 rule medInsuranceForPatients{
   description:  "System ACL to permit all access"
   participant(p): "health.Patient"
-  operation: DELETE, UPDATE, CREATE
+  operation: DELETE, CREATE
   resource(r): "health.MedicInsurance"
   condition: (r.patient.getIdentifier() == p.getIdentifier())
   action: DENY
@@ -87,6 +112,214 @@ rule MedInsuForProviders{
   action: DENY
 }
 
+rule Patientcannotaddby{
+  description:"patient can be added by provider or patient"
+  participant:"health.InsuranceProvider"
+  operation:ALL
+  resource:"health.AddPatient"
+  action:DENY
+}
+
+rule providercannotaddby{
+  description:"provider details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.AddProvider"
+  action:DENY
+}
+
+rule providercannotaddbyinsurance{
+  description:"provider details can added by himself only"
+  participant:"health.InsuranceProvider"
+  operation:ALL
+  resource:"health.AddProvider"
+  action:DENY
+}
+
+rule Insurercannotaddbypatient{
+  description:"insurance details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.AddInsurer"
+  action:DENY
+}
+
+rule Insurercannotaddbyprovider{
+  description:"insurance details can added by himself only"
+  participant:"health.Provider"
+  operation:ALL
+  resource:"health.AddInsurer"
+  action:DENY
+}
+
+
+
+rule Encounterbookingcannotdone{
+
+  description:"booking details can added by -- only"
+  participant:"health.InsuranceProvider"
+  operation:ALL
+  resource:"health.Encounterbooking"
+  action:DENY
+
+}
+
+
+rule Providervisitcandone{
+  description:"insurance details can added by himself only"
+  participant:"health.Provider"
+  operation:ALL
+  resource:"health.Providervisit"
+  action:ALLOW
+}
+
+
+rule Providervisitcannotdo{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.Providervisit"
+  action:DENY
+}
+
+
+rule Claim_Insurancecando{
+  
+  description:"insurance details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.Claim_Insurance"
+  action:ALLOW
+
+}
+
+rule AddInsurancecando{
+  description:"insurance details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.AddInsurance"
+  action:ALLOW
+}
+rule AddInsurancecannotdo{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.AddInsurance"
+  action:DENY
+}
+
+rule RemoveInsurercando{
+  description:"insurance details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.RemoveInsurer"
+  action:ALLOW
+}
+
+rule RemoveInsurercannotdo{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.RemoveInsurer"
+  action:DENY
+}
+
+
+rule AddPermissionToIdcando{
+  description:"insurance details can added by himself only"
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.AddPermissionToId"
+  action:ALLOW
+
+}
+rule AddPermissionToIdcannotdo{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.AddPermissionToId"
+  action:DENY
+
+}
+
+rule RevokeSharingcando{
+  description:"insurance details can added by himself only" 
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.RevokeSharing"
+  action:ALLOW
+
+}
+
+
+rule RevokeSharingcannotdo{
+  description:"insurance details can added by himself only" 
+  participant:"health.*"
+  operation:ALL
+  resource:"health.RevokeSharing"
+  action:DENY
+}
+rule ChangeProvidercando{
+  description:"insurance details can added by himself only" 
+  participant:"health.Patient"
+  operation:ALL
+  resource:"health.ChangeProvider"
+  action:ALLOW
+}
+rule ChangeProvidercannotdo{
+  description:"insurance details can added by himself only" 
+  participant:"health.*"
+  operation:ALL
+  resource:"health.ChangeProvider"
+  action:DENY
+}
+
+rule Approve_insurance_access{
+  description:"insurance details can added by himself only"
+  participant:"health.InsuranceProvider"
+  operation:ALL
+  resource:"health.Approve_insurance"
+  action:ALLOW
+}
+rule Approve_insurance_reject{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.Approve_insurance"
+  action:DENY
+}
+rule Claim_Insurancecannotdo{
+  description:"insurance details can added by himself only"
+  participant:"health.**"
+  operation:ALL
+  resource:"health.Claim_Insurance"
+  action:DENY
+}
+
+rule Addtranscationcando{
+  description:"insurance details can added by himself only"
+  participant:"health.InsuranceProvider"
+  operation:ALL
+  resource:"health.Register_Insurance"
+  action:ALLOW
+}
+
+rule  Addinsurancecannotdone{
+  description:"insurance details can added by himself only"
+  participant:"health.*"
+  operation:ALL
+  resource:"health.Register_Insurance"
+  action:DENY
+
+}
+rule RestrictionToEncounter{
+  description:  "System ACL to permit all access"
+  participant(p): "health.**"
+  operation: ALL
+  resource(r): "health.Encounter"
+  condition: (r.patient.sharingDetails.indexOf(p.getFullyQualifiedIdentifier())<-1)
+  action: DENY
+}
 rule All{
   description:  "System ACL to permit all access"
   participant: "health.**"
